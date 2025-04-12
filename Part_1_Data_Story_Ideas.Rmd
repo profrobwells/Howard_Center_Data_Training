@@ -1,0 +1,71 @@
+---
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+::: {style="text-align: center; color: #337DFF;"}
+# How Journalists Ask Questions of Data
+
+### Digital Certificate Program
+
+#### Philip Merrill College of Journalism
+
+(ver April 12, 2025)
+:::
+
+<br>
+
+::: {style="text-align: center;"}
+<img src="assets/Merrill_logo.png" width="370" height="200"/>
+:::
+
+::: {style="font-weight:bold;"}
+``` markdown
+Rob Wells, Ph.D., Associate Professor
+```
+:::
+
+6 subtopics per course 30 video each - per subtopic
+
+3 hours of content 3-4 lessons per class
+
+1.How journalists look and think about idea generation for data; How to
+generate data story ideas 2.dpylr verbs (actions that allow users to
+solve data manipulation challenges), and the questions each enables us
+to ask 3.Grouping and summarizing (counts, sums and averages); Joins
+(combining rows from datasets) and what it enables 4. Basic statistics
+5.Text analysis 6.Exploratory data visualization
+
+```{r}
+library(tidyverse)
+```
+
+We'll explore Life Expectancy Data by country, 1800 to present with
+projections to 2100
+
+Source is [gapminder.org](https://www.gapminder.org/data/)
+
+[Documentation is
+here](https://www.gapminder.org/data/documentation/gd004/)
+
+#### Import Life Expectancy Data
+```{r}
+life_expect <- read.csv("./assets/lex.csv")
+```
+
+
+#### Examine Data
+```{r}
+glimpse(life_expect)
+
+```
+
+File types:
+
+-  <chr> = character, text data
+-  <dbl> = numeric data
+
+302 columns - Each year life expectancy data
+196 rows - each row is a country (195 counties)
