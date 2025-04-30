@@ -58,7 +58,7 @@ life_expect <- read.csv("./assets/lex.csv")
 
 #### Examine Data
 ```{r}
-glimpse(life_expect)
+head(glimpse(life_expect))
 
 ```
 
@@ -69,3 +69,108 @@ File types:
 
 302 columns - Each year life expectancy data
 196 rows - each row is a country (195 counties)
+
+
+#Highest life expectancy
+Which country has the highest life expectancy in 2025?
+```{r}
+
+life_expect |> 
+  filter(X2025 == max(X2025, na.rm = TRUE)) |>
+  select(country, X2025)
+
+
+```
+Japan and Singapore, both at 86 years!
+
+#Lowest life expectancy
+Which country has the lowest life expectancy in 2025?
+
+```{r}
+
+life_expect |> 
+  filter(X2025 == min(X2025, na.rm = TRUE)) |>
+  select(country, X2025)
+
+
+```
+
+Obviously, we have a data problem, with Hong Kong and Liechtenstein registering at zero. Let's adjust our query for results greater than zero
+```{r}
+
+life_expect |> 
+  # First filter out zeros and NA values
+  filter(X2025 > 0, !is.na(X2025)) |>
+  # Then find the minimum among remaining values
+  filter(X2025 == min(X2025, na.rm = TRUE)) |>
+  select(country, X2025)
+
+
+```
+
+
+#Average life expectancy in 2025
+```{r}
+life2025 <- mean(life_expect$X2025)
+life2025
+
+```
+
+#Average life expectancy in 1925
+```{r}
+#Here we added na.rm = TRUE to allow the calculation to skip blank values
+life1925 <- mean(life_expect$X1925, na.rm = TRUE)
+life1925
+
+```
+
+# Percentage change in life expectancy, 1925 v 2025
+```{r}
+(life2025-life1925)/life1925 *100
+
+
+```
+
+Average life expectancy has increased by about 92% since 1925.
+
+```{r}
+
+
+
+```
+
+
+
+#YOUR TURN
+Using the examples above
+```{r}
+
+
+
+```
+
+
+
+
+We see from our quick glance that Andorra lacks entries for the first few years. Let's focus on Andorra using a filter
+
+```{r}
+
+Andorra <- life_expect |> 
+  filter(country == "Andorra") |> 
+   # Convert to long format so we can work with years as values
+  pivot_longer(
+    cols = starts_with("X"), 
+    names_to = "year",
+    values_to = "life_expectancy"
+  ) |>
+  # Remove the "X" prefix from year names and convert to numeric
+  mutate(year = as.numeric(gsub("X", "", year))) |>
+  # Keep only years with non-NA values
+  filter(!is.na(life_expectancy)) |>
+  # Sort by year (optional)
+  arrange(year)
+
+
+```
+
