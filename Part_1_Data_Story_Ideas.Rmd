@@ -39,6 +39,7 @@ to ask 3.Grouping and summarizing (counts, sums and averages); Joins
 5.Text analysis 6.Exploratory data visualization
 
 ```{r}
+#install.packages("tidyverse")
 library(tidyverse)
 ```
 
@@ -70,8 +71,19 @@ File types:
 302 columns - Each year life expectancy data
 196 rows - each row is a country (195 counties)
 
+# Dpylr verbs 
+These are the power verbs in R to identify, filter, summarise and create new fields
 
-#Highest life expectancy
+Select
+Arrange
+Filter
+Group_by
+Summarize
+Mutate
+
+We will deploy these tools in the problems below
+
+Highest life expectancy
 Which country has the highest life expectancy in 2025?
 ```{r}
 
@@ -83,8 +95,10 @@ life_expect |>
 ```
 Japan and Singapore, both at 86 years!
 
-#Lowest life expectancy
-Which country has the lowest life expectancy in 2025?
+### Using filters
+
+Filters can help us find needles in data haystacks.
+Let's use a filter to determine counties with the lowest life expectancy in 2025.
 
 ```{r}
 
@@ -108,15 +122,16 @@ life_expect |>
 
 ```
 
+### Using means
 
-#Average life expectancy in 2025
+Average life expectancy in 2025
 ```{r}
 life2025 <- mean(life_expect$X2025)
 life2025
 
 ```
 
-#Average life expectancy in 1925
+Average life expectancy in 1925
 ```{r}
 #Here we added na.rm = TRUE to allow the calculation to skip blank values
 life1925 <- mean(life_expect$X1925, na.rm = TRUE)
@@ -124,7 +139,7 @@ life1925
 
 ```
 
-# Percentage change in life expectancy, 1925 v 2025
+### Percentage change in life expectancy, 1925 v 2025
 ```{r}
 (life2025-life1925)/life1925 *100
 
@@ -133,13 +148,66 @@ life1925
 
 Average life expectancy has increased by about 92% since 1925.
 
+# YOUR TURN
+Using the examples above, determine the life expectancy percentage change from 1975 to 2020.
 ```{r}
 
+life1975 <- mean(life_expect$X1975, na.rm = TRUE)
 
+life2020 <- mean(life_expect$X2020)
+
+(life2020-life1975)/life1975 *100
+```
+
+Counting
+We know the average life expectancy for 2025, 1975 and 1925.
+Let's count the number of countries above these averages
+
+
+```{r}
+
+life_expect |> 
+  select(country, X2025) |> 
+  filter(X2025 > life2025) |> 
+  count()
 
 ```
 
+```{r}
+life_expect |> 
+  select(country, X1975) |> 
+  filter(X1975 > life1975) |> 
+  count()
 
+```
+```{r}
+life_expect |> 
+  select(country, X1925) |> 
+  filter(X1925 > life1925) |> 
+  count()
+```
+
+Or you can combine them 
+This code creates a new table that puts all the the calculations into one place for easier analysis
+```{r}
+
+above_average <- data.frame(
+  Year = c("1925", "1975", "2025"),
+  Countries_Above_Average = c(
+    sum(life_expect$X1925 > life1925, na.rm = TRUE),
+    sum(life_expect$X1975 > life1975, na.rm = TRUE),
+    sum(life_expect$X2025 > life2025, na.rm = TRUE)
+  )
+)
+
+above_average
+```
+ 
+
+
+
+
+(actions that allow users to solve data manipulation challenges), 
 
 #YOUR TURN
 Using the examples above
