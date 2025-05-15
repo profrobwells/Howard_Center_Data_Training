@@ -88,8 +88,9 @@ Which country has the highest life expectancy in 2025?
 ```{r}
 
 life_expect |> 
-  filter(X2025 == max(X2025, na.rm = TRUE)) |>
-  select(country, X2025)
+  select(country, X2025) |> 
+  filter(X2025 == max(X2025, na.rm = TRUE))
+  
 
 
 ```
@@ -103,8 +104,9 @@ Let's use a filter to determine counties with the lowest life expectancy in 2025
 ```{r}
 
 life_expect |> 
-  filter(X2025 == min(X2025, na.rm = TRUE)) |>
-  select(country, X2025)
+  select(country, X2025) |> 
+  filter(X2025 == min(X2025, na.rm = TRUE))
+
 
 
 ```
@@ -113,11 +115,12 @@ Obviously, we have a data problem, with Hong Kong and Liechtenstein registering 
 ```{r}
 
 life_expect |> 
+  select(country, X2025) |> 
   # First filter out zeros and NA values
   filter(X2025 > 0, !is.na(X2025)) |>
   # Then find the minimum among remaining values
-  filter(X2025 == min(X2025, na.rm = TRUE)) |>
-  select(country, X2025)
+  filter(X2025 == min(X2025, na.rm = TRUE)) 
+
 
 
 ```
@@ -125,6 +128,7 @@ life_expect |>
 ### Using means
 
 Average life expectancy in 2025
+The result, 73.1551, is stored in the variable "life2025"
 ```{r}
 life2025 <- mean(life_expect$X2025)
 life2025
@@ -140,6 +144,7 @@ life1925
 ```
 
 ### Percentage change in life expectancy, 1925 v 2025
+The numbers are stored in these variables, so just do the math
 ```{r}
 (life2025-life1925)/life1925 *100
 
@@ -152,11 +157,13 @@ Average life expectancy has increased by about 92% since 1925.
 Using the examples above, determine the life expectancy percentage change from 1975 to 2020.
 ```{r}
 
-life1975 <- mean(life_expect$X1975, na.rm = TRUE)
-
-life2020 <- mean(life_expect$X2020)
-
-(life2020-life1975)/life1975 *100
+#this portion is blank for the student. 
+# The answer is 14.88097
+# life1975 <- mean(life_expect$X1975, na.rm = TRUE)
+# 
+# life2020 <- mean(life_expect$X2020)
+# 
+# (life2020-life1975)/life1975 *100
 ```
 
 Counting
@@ -172,22 +179,29 @@ life_expect |>
   count()
 
 ```
-
+# YOUR TURN
+Using the example above, determine the the number of countries above the 1975 average life expectancy
 ```{r}
-life_expect |> 
-  select(country, X1975) |> 
-  filter(X1975 > life1975) |> 
-  count()
+#this portion is blank for the student. 
+# The answer is 113
+# life_expect |> 
+#   select(country, X1975) |> 
+#   filter(X1975 > life1975) |> 
+#   count()
 
 ```
+# YOUR TURN
+Using the example above, determine the the number of countries above the 1925 average life expectancy
 ```{r}
-life_expect |> 
-  select(country, X1925) |> 
-  filter(X1925 > life1925) |> 
-  count()
+#this portion is blank for the student. 
+# The answer is 64
+# life_expect |> 
+#   select(country, X1925) |> 
+#   filter(X1925 > life1925) |> 
+#   count()
 ```
 
-Or you can combine them 
+Here how to combine the three results
 This code creates a new table that puts all the the calculations into one place for easier analysis
 ```{r}
 
@@ -202,7 +216,50 @@ above_average <- data.frame(
 
 above_average
 ```
- 
+
+### Percentages 
+Ok, all of that is fine, but do we have a consistent denominator, the same number of countries over time?
+Remember, when dealing with historical data, nations and language can change over time.
+
+Count total number of countries
+
+```{r}
+life_expect |> 
+  select(country, X2025, X1975, X1925) |> 
+  summarize(
+    count_2025 = sum(!is.na(X2025)),
+    count_1975 = sum(!is.na(X1975)),
+    count_1925 = sum(!is.na(X1925))
+  )
+
+```
+
+```{r}
+
+
+above_average <- data.frame(
+  Year = c("1925", "1975", "2025"),
+  Countries_Above_Average = c(
+    sum(life_expect$X1925 > life1925, na.rm = TRUE),
+    sum(life_expect$X1975 > life1975, na.rm = TRUE),
+    sum(life_expect$X2025 > life2025, na.rm = TRUE)
+  ),
+  Total_Countries_With_Data = c(
+    sum(!is.na(life_expect$X1925)),
+    sum(!is.na(life_expect$X1975)),
+    sum(!is.na(life_expect$X2025))
+  )
+) |> 
+  mutate(Percent_Above_Average = round(
+  (Countries_Above_Average / Total_Countries_With_Data) * 100, 
+  1
+))
+
+above_average
+
+
+
+```
 
 
 
