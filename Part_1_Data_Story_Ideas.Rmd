@@ -65,8 +65,7 @@ here](https://www.gapminder.org/data/documentation/gd004/)
 life_expect <- read.csv("./assets/lex.csv")
 ```
 
-
-#### Examine Data
+Examine Data
 ```{r}
 head(glimpse(life_expect))
 
@@ -107,7 +106,7 @@ life_expect |>
 ```
 Japan and Singapore, both at 86 years!
 
-### Using filters
+Using filters
 
 Filters can help us find needles in data haystacks.
 Let's use a filter to determine counties with the lowest life expectancy in 2025.
@@ -136,7 +135,7 @@ life_expect |>
 
 ```
 
-### Using means
+Using means
 
 Average life expectancy in 2025
 The result, 73.1551, is stored in the variable "life2025"
@@ -218,7 +217,8 @@ Using the example above, determine the the number of countries above the 1925 av
 #   filter(X1925 > life1925) |> 
 #   count()
 ```
-# Using Mutate
+
+### Mutate
 We are now going to categorize countries as above or below the mean life expectancy by using the mutate command. Mutate creates a new column and there are various stratgies to fill in new results. Here we will assign **above** to all counties in 1925 above the mean life expectancy of 38.11 years. We are using case_when which sets up a logical 'if/else' statement to apply the category
 ```{r}
 life_1925 <- life_expect |> 
@@ -331,6 +331,93 @@ total |>
 
 ```
 
+
+#### YOUR TURN
+Examine life expectancy for 1800, 1900, 2000.
+Determine the mean values for each of those three centuries.
+Using mutate, create a new category column for each decade assigning the counties that are above and below the median value.
+Compile the three decade into a single dataframe
+Produce a single dataframe that counts the number above and below the median, and calculate a percentage of the whole for only those countries with reported data
+
+Part 1: Calculate median values by time period 
+```{r}
+#this portion is blank for the student. 
+# life1800 <- mean(life_expect$X1800, na.rm = TRUE)
+# life1900 <- mean(life_expect$X1900, na.rm = TRUE)
+# life2000 <- mean(life_expect$X2000, na.rm = TRUE)
+
+```
+
+Part 2: Categorize by time period above / below median
+
+```{r}
+#this portion is blank for the student. 
+# 
+# life_1800 <- life_expect |>
+#   select(country, X1800) |>
+#   mutate(category = case_when(
+#          X1800 > life1800 ~ "above",
+#           X1800 < life1800 ~ "below")
+# )
+# 
+# life_1900 <- life_expect |>
+#   select(country, X1900) |>
+#   mutate(category = case_when(
+#          X1900 > life1900 ~ "above",
+#           X1900 < life1900 ~ "below")
+# )
+# 
+# life_2000 <- life_expect |>
+#   select(country, X2000) |>
+#   mutate(category = case_when(
+#          X2000 > life2000 ~ "above",
+#           X2000 < life2000 ~ "below")
+# )
+
+```
+
+Part 3: Compile 
+```{r}
+#this portion is blank for the student. 
+# life_1800 <- life_1800 %>%
+#   rename(value = X1800) %>%
+#   mutate(year = 1800)
+# 
+# life_1900 <- life_1900 %>%
+#   rename(value = X1900) %>%
+#   mutate(year = 1900)
+# 
+# life_2000 <- life_2000 %>%
+#   rename(value = X2000) %>%
+#   mutate(year = 2000)
+# 
+# total1800_2000 <- rbind(life_1800, life_1900, life_2000)
+
+```
+
+
+Part 4: Calculate totals, percentages
+```{r}
+#this portion is blank for the student. 
+ # total1800_2000 |> 
+ #   group_by(year) |> 
+ #  count(category) |> 
+ #  filter(!is.na(category)) |> #drops the counties without data
+ #  mutate(percent = n/sum(n)) |> 
+ #  mutate(percent = round(percent*100, 1))
+
+
+# Answer:
+# year. category n %
+# 1800	above	95	51.1	
+# 1800	below	91	48.9	
+# 1900	above	81	43.5	
+# 1900	below	105	56.5	
+# 2000	above	115	58.7	
+# 2000	below	81	41.3	
+```
+
+
 Distribution of the data
 How are countries grouped? Were there many below the average?
 
@@ -342,6 +429,43 @@ life_1925 |>
 
 We see the lowest value is 21 years life expectancy, the first quartile is up to 32 years, the median value was 36 years, the mean or average was 38 years, the third quartile was 40 years and the maximum value was 64 years.
 
+Let's explore the distribution by using a tool called standard deviation
+```{r}
+life_1925_sd <- life_1925 |> 
+  summarize(standard_deviation = sd(value, na.rm = TRUE))
+life_1925_sd
+```
+So we know the mean life expectancy is 38 years. Tells us that 68% of the countries in 1925 fall within one standard deviation, or 9.3 years, of the mean. In other words, 68% of the countries had a life expectancy between 28.3 years and 46.3 years.
+
+Just about all countries, or 95%, fall within two standard deviations from the mean, or 18.6 years; that would be between 19.4 years and 56.6 years of age.
+
+And nearly all counties are within three standard deviations, or 27.9 years, or 10.1 years and 65.9 years.
+
+This means that any value within 9.3 percentage points of the mean (38 years), either above or below, is within the first group. This provides a sense of outliers and how dispersed the data may be in the dataset.
+
+
+
+```{r}
+life_quartiles <- life_1925 |> 
+  filter(!is.na(value)) |> 
+  mutate(quartile = cut(value, 
+                         breaks = quantile(value, probs = seq(0, 1, 0.25), na.rm = TRUE),#quantile allows division into any grouping; this gives the min value, 0; the max value, 1; and the step value, 0.25
+                         labels = c("Q1", "Q2", "Q3", "Q4"),
+                         include.lowest = TRUE)) #keeps lowest value in first group
+
+
+quartile_stats <- life_quartiles |> 
+  group_by(quartile) |> 
+  summarize(
+    count = n(),
+    mean_value = mean(value, na.rm = TRUE),
+    sd_value = sd(value, na.rm = TRUE),
+    min_value = min(value, na.rm = TRUE),
+    max_value = max(value, na.rm = TRUE)
+  )
+```
+
+
 ### Data Visualization
 
 ```{r}
@@ -350,15 +474,6 @@ life_1925 |>
   ggplot(aes(x = value)) +
   geom_histogram()
 ```
-
-```{r}
-
-life_1925 |> 
-  summarize(standard_deviation = sd(value, na.rm = TRUE))
-
-
-```
-
 
 
 (actions that allow users to solve data manipulation challenges), 
