@@ -12,7 +12,7 @@ editor_options:
 
 #### Philip Merrill College of Journalism
 
-(ver April 12, 2025)
+(ver May 19, 2025)
 :::
 
 <br>
@@ -31,12 +31,21 @@ Rob Wells, Ph.D., Associate Professor
 
 3 hours of content 3-4 lessons per class
 
-1.How journalists look and think about idea generation for data; How to
-generate data story ideas 2.dpylr verbs (actions that allow users to
+
+1.dpylr verbs (actions that allow users to
 solve data manipulation challenges), and the questions each enables us
-to ask 3.Grouping and summarizing (counts, sums and averages); Joins
-(combining rows from datasets) and what it enables 4. Basic statistics
-5.Text analysis 6.Exploratory data visualization
+to ask 
+
+2.Grouping and summarizing (counts, sums and averages); Joins
+(combining rows from datasets) and what it enables 
+
+3.Basic statistics
+
+4.How journalists look and think about idea generation for data; How to generate data story ideas
+
+5.Text analysis 
+
+6.Exploratory data visualization
 
 ```{r}
 #install.packages("tidyverse")
@@ -71,7 +80,11 @@ File types:
 302 columns - Each year life expectancy data
 196 rows - each row is a country (195 counties)
 
-# Dpylr verbs 
+## Dpylr verbs 
+
+1.dpylr verbs (actions that allow users to solve data manipulation challenges), and the questions each enables us
+to ask 
+
 These are the power verbs in R to identify, filter, summarise and create new fields
 
 Select
@@ -91,8 +104,6 @@ life_expect |>
   select(country, X2025) |> 
   filter(X2025 == max(X2025, na.rm = TRUE))
   
-
-
 ```
 Japan and Singapore, both at 86 years!
 
@@ -143,7 +154,9 @@ life1925
 
 ```
 
-### Percentage change in life expectancy, 1925 v 2025
+**38 years was the average life expectancy in 1925!** Wow.
+
+Percentage change in life expectancy, 1925 v 2025
 The numbers are stored in these variables, so just do the math
 ```{r}
 (life2025-life1925)/life1925 *100
@@ -153,7 +166,7 @@ The numbers are stored in these variables, so just do the math
 
 Average life expectancy has increased by about 92% since 1925.
 
-# YOUR TURN
+#### YOUR TURN
 Using the examples above, determine the life expectancy percentage change from 1975 to 2020.
 ```{r}
 
@@ -166,7 +179,12 @@ Using the examples above, determine the life expectancy percentage change from 1
 # (life2020-life1975)/life1975 *100
 ```
 
-Counting
+## Grouping and Summuing. 
+
+2.Grouping and summarizing (counts, sums and averages); Joins
+(combining rows from datasets) and what it enables 
+
+### Counting
 We know the average life expectancy for 2025, 1975 and 1925.
 Let's count the number of countries above these averages
 
@@ -179,7 +197,7 @@ life_expect |>
   count()
 
 ```
-# YOUR TURN
+#### YOUR TURN
 Using the example above, determine the the number of countries above the 1975 average life expectancy
 ```{r}
 #this portion is blank for the student. 
@@ -190,7 +208,7 @@ Using the example above, determine the the number of countries above the 1975 av
 #   count()
 
 ```
-# YOUR TURN
+#### YOUR TURN
 Using the example above, determine the the number of countries above the 1925 average life expectancy
 ```{r}
 #this portion is blank for the student. 
@@ -200,8 +218,196 @@ Using the example above, determine the the number of countries above the 1925 av
 #   filter(X1925 > life1925) |> 
 #   count()
 ```
+# Using Mutate
+We are now going to categorize countries as above or below the mean life expectancy by using the mutate command. Mutate creates a new column and there are various stratgies to fill in new results. Here we will assign **above** to all counties in 1925 above the mean life expectancy of 38.11 years. We are using case_when which sets up a logical 'if/else' statement to apply the category
+```{r}
+life_1925 <- life_expect |> 
+  select(country, X1925) |> 
+  mutate(category = case_when(
+         X1925 > life1925 ~ "above",
+          X1925 < life1925 ~ "below")
+)
+```
 
-Here how to combine the three results
+Let's count the results
+```{r}
+life_1925 |> 
+  count(category)
+
+```
+
+#### YOUR TURN
+Using the example above, categorize countries as being above or below the 1975 average life expectancy
+```{r}
+#this portion is blank for the student. 
+# life_1975 <- life_expect |> 
+#   select(country, X1975) |> 
+#   mutate(category = case_when(
+#          X1975 > life1975 ~ "above",
+#           X1975 < life1975 ~ "below")
+# )
+```
+
+#### YOUR TURN
+Using the example above, categorize countries as being above or below the 2025 average life expectancy
+
+```{r}
+#this portion is blank for the student. 
+# life_2025 <- life_expect |>
+#   select(country, X2025) |>
+#   mutate(category = case_when(
+#          X2025 > life2025 ~ "above",
+#           X2025 < life2025 ~ "below")
+# )
+```
+
+Now we combine the three results
+--we rename a column to the same name for all three time periods so they can be combined. This is a good example of using mutate.
+
+```{r}
+# Transform life_1925 dataframe
+life_1925 <- life_1925 %>%
+  rename(value = X1925) %>%
+  mutate(year = 1925)
+
+life_1975 <- life_1975 %>%
+  rename(value = X1975) %>%
+  mutate(year = 1975)
+
+life_2025 <- life_2025 %>%
+  rename(value = X2025) %>%
+  mutate(year = 2025)
+```
+
+### Joins
+
+Joins (combining rows from datasets) and what it enables 
+
+We combine the three using rbind
+```{r}
+
+# Combine the dataframes
+total <- rbind(life_1925, life_1975, life_2025)
+
+```
+
+Count totals by time period
+
+```{r}
+total |> 
+  group_by(year, category) |> 
+  count(category)
+
+```
+
+## Basic statistics
+
+### Percentages
+Let's determine the percent above, below the mean
+
+Step 1: Count the categories by year
+
+by grouping by year, we can count up the above and below average countries. The results are in the colummn n
+```{r}
+total |> 
+   group_by(year) |> 
+  count(category) 
+```
+
+Step Two: Percentage of Whole
+
+We add two lines of code to calculate the percentage. Note how mutate creates a new column that stores the value. And we format it at the end to make it look pretty.
+
+The percent calculation divides the category total into the full number denominator. Because 1925 has 10 null values, we filter those out. Remember, when dealing with historical data, nations and language can change over time.
+
+
+```{r}
+total |> 
+   group_by(year) |> 
+  count(category) |> 
+  filter(!is.na(category)) |> #drops the counties without data
+  mutate(percent = n/sum(n)) |> 
+  mutate(percent = round(percent*100, 1))
+
+```
+
+Distribution of the data
+How are countries grouped? Were there many below the average?
+
+
+```{r}
+life_1925 |> 
+   summary(value)
+```
+
+We see the lowest value is 21 years life expectancy, the first quartile is up to 32 years, the median value was 36 years, the mean or average was 38 years, the third quartile was 40 years and the maximum value was 64 years.
+
+### Data Visualization
+
+```{r}
+
+life_1925 |> 
+  ggplot(aes(x = value)) +
+  geom_histogram()
+```
+
+```{r}
+
+life_1925 |> 
+  summarize(standard_deviation = sd(value, na.rm = TRUE))
+
+
+```
+
+
+
+(actions that allow users to solve data manipulation challenges), 
+
+#### YOUR TURN
+Using the examples above
+```{r}
+
+
+
+```
+
+
+
+
+We see from our quick glance that Andorra lacks entries for the first few years. Let's focus on Andorra using a filter
+
+```{r}
+
+Andorra <- life_expect |> 
+  filter(country == "Andorra") |> 
+   # Convert to long format so we can work with years as values
+  pivot_longer(
+    cols = starts_with("X"), 
+    names_to = "year",
+    values_to = "life_expectancy"
+  ) |>
+  # Remove the "X" prefix from year names and convert to numeric
+  mutate(year = as.numeric(gsub("X", "", year))) |>
+  # Keep only years with non-NA values
+  filter(!is.na(life_expectancy)) |>
+  # Sort by year (optional)
+  arrange(year)
+
+
+```
+
+
+## Story ideas
+4.How journalists look and think about idea generation for data; How to generate data story ideas
+
+----------------------------------------------------------------------------
+#Notes
+----------------------------------------------------------------------------
+
+
+
+
+Here's another way to combine the three results
 This code creates a new table that puts all the the calculations into one place for easier analysis
 ```{r}
 
@@ -260,42 +466,3 @@ above_average
 
 
 ```
-
-
-
-
-(actions that allow users to solve data manipulation challenges), 
-
-#YOUR TURN
-Using the examples above
-```{r}
-
-
-
-```
-
-
-
-
-We see from our quick glance that Andorra lacks entries for the first few years. Let's focus on Andorra using a filter
-
-```{r}
-
-Andorra <- life_expect |> 
-  filter(country == "Andorra") |> 
-   # Convert to long format so we can work with years as values
-  pivot_longer(
-    cols = starts_with("X"), 
-    names_to = "year",
-    values_to = "life_expectancy"
-  ) |>
-  # Remove the "X" prefix from year names and convert to numeric
-  mutate(year = as.numeric(gsub("X", "", year))) |>
-  # Keep only years with non-NA values
-  filter(!is.na(life_expectancy)) |>
-  # Sort by year (optional)
-  arrange(year)
-
-
-```
-
