@@ -63,6 +63,10 @@ If your country isn't on the polar ends of the spectrum, we need to learn how it
 To kick that up a notch, we will look at where your country falls in the distribution. Is it grouped in the lowest quarter of the countries or in the highest tier? We can measure distribution by quartile. 
 
 
+HERE'S WHAT A LIBRARY IS
+TIDYVERSE
+WRITE CODE IN VIDEOS
+
 ```{r}
 #install.packages("tidyverse")
 library(tidyverse)
@@ -174,7 +178,7 @@ life_expect |>
 )
 ```
 
-Average life expectancy in 1925
+#BASE R FIX - Average life expectancy in 1925
 ```{r}
 #Here we added na.rm = TRUE to allow the calculation to skip blank values
 life1925 <- mean(life_expect$X1925, na.rm = TRUE)
