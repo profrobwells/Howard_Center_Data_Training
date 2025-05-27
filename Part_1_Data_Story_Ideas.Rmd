@@ -27,21 +27,7 @@ Rob Wells, Ph.D., Associate Professor
 ```
 :::
 
-6 subtopics per course 30 video each - per subtopic
-
-3 hours of content 3-4 lessons per class
-
-1.dpylr verbs (actions that allow users to solve data manipulation
-challenges), and the questions each enables us to ask
-
-2.Grouping and summarizing (counts, sums and averages); Joins (combining
-rows from datasets) and what it enables
-
-3.Basic statistics
-
-4.Text analysis
-
-5.Exploratory data visualization
+# Looking for stories in data
 
 How journalists look and think about idea generation for data; How to
 generate data story ideas
@@ -138,7 +124,7 @@ here](https://www.gapminder.org/data/documentation/gd004/)
 For your convenience, I have downloaded a slice of the data into a comma separated values file, "lex.csv"
 
 ```{r}
-life_expect <- read_csv("./assets/lex.csv")
+life_expect <- read.csv("./assets/lex.csv") 
 ```
 
 Examine Data
@@ -181,6 +167,12 @@ life_expect |>
 
 Japan and Singapore, both at 86 years!
 
+**Pipe command**
+
+You noticed an odd set of characters in the previous code: |> is a "pipe" command, which links the code lines in logical order. (Your program may display it as %>% - it's the same thing. You can change it to |> in R Studio preferences: Tools | Global Options | Code | Use Native Pipe Operator). 
+
+Think of the pipe command as telling R, "now add this command." So in the previous code, we started with the data frame life_expect and told R to add another command, select two columns, country and the year 2025. And then add another command, filter 2025 by the maximum value. 
+
 Using filters
 
 Filters can help us find needles in data haystacks. Let's use a filter
@@ -208,7 +200,7 @@ life_expect |>
 ```
 
 What's the story here? Lesotho residents tend to live about 53 years,
-according to 2025 data from Gapminder.com, which is 61% as long as the
+according to 2025 data from Gapminder.org, which is 61% as long as the
 highest life expectancy in Japan and Singapore of 86 years.
 
 Figure the percentage:
@@ -223,7 +215,10 @@ Average life expectancy in 2025 The result, 73.1551, is stored in the
 variable "life2025"
 
 ```{r}
-life2025 <- mean(life_expect$X2025)
+life2025 <- life_expect |> 
+  summarize(mean(X2025)) |> 
+    pull() # this extracts the result as single numeric value
+
 life2025
 
 ```
@@ -239,11 +234,14 @@ life_expect |>
 )
 ```
 
-#BASE R FIX - Average life expectancy in 1925
+#Average life expectancy in 1925
 
 ```{r}
 #Here we added na.rm = TRUE to allow the calculation to skip blank values
-life1925 <- mean(life_expect$X1925, na.rm = TRUE)
+life1925 <- life_expect |> 
+  summarise(mean_life = mean(X1925, na.rm = TRUE)) |> 
+    pull() 
+
 life1925
 
 ```
@@ -268,12 +266,21 @@ change from 1975 to 2020.
 
 #this portion is blank for the student. 
 # The answer is 14.88097
-# life1975 <- mean(life_expect$X1975, na.rm = TRUE)
+# life1975 <- life_expect |>
+#     summarise(mean(X1975, na.rm = TRUE)) |> 
+#    pull()
 # 
-# life2020 <- mean(life_expect$X2020)
 # 
+# life2020<- life_expect |>
+#    summarise(mean(X2020, na.rm = TRUE)) |>
+#     pull()
+# #
+# #
 # (life2020-life1975)/life1975 *100
 ```
+
+
+
 
 ## Grouping and Summing.
 
@@ -300,9 +307,9 @@ Using the example above, determine the the number of countries above the
 ```{r}
 #this portion is blank for the student. 
 # The answer is 113
-# life_expect |> 
-#   select(country, X1975) |> 
-#   filter(X1975 > life1975) |> 
+# life_expect |>
+#   select(country, X1975) |>
+#   filter(X1975 > life1975) |>
 #   count()
 
 ```
@@ -489,22 +496,24 @@ percentage change life expectancy for all countries And we use slice_max
 to extract the top 10 results
 
 ```{r}
-life_expect |> 
+top <- life_expect |> 
   select(country, X2025, X1925) |> 
   # filter(country =="Afghanistan") |> 
   mutate(pct_change = round((X2025-X1925) / X1925*100,1)) |> 
   slice_max(pct_change, n= 10) 
+top
 ```
 
 And slice_min to extract the bottom 10 results
 
 ```{r}
-life_expect |> 
+bottom <- life_expect |> 
   select(country, X2025, X1925) |> 
   mutate(pct_change = round(((X2025-X1925) / X1925)*100,1)) |> 
   filter(!is.na(pct_change)) |> #filter out NA values
   filter(X2025 > 1) |> # filter out a random 0 value for Hong Kong in 2025
   slice_min(pct_change, n= 10)
+bottom
 ```
 
 #### ASSIGNMENT
@@ -521,9 +530,18 @@ Part 1: Calculate median values by time period
 
 ```{r}
 #this portion is blank for the student. 
-# life1800 <- mean(life_expect$X1800, na.rm = TRUE)
-# life1900 <- mean(life_expect$X1900, na.rm = TRUE)
-# life2000 <- mean(life_expect$X2000, na.rm = TRUE)
+# life1800 <- life_expect |>
+#    summarise(mean(X1800, na.rm = TRUE)) |> 
+#   pull() # this extracts the result as single numeric value
+# 
+# life1900 <- life_expect |>
+#    summarise(mean(X1900, na.rm = TRUE)) |> 
+#   pull()
+# 
+# life2000 <- life_expect |>
+#    summarise(mean(X2000, na.rm = TRUE)) |> 
+#   pull()
+
 
 ```
 
@@ -602,17 +620,17 @@ Create two tables with the top 10 biggest increases for each period
 
 ```{r}
 #this portion is blank for the student. 
-# change <- life_expect |> 
-#   select(country, X1800, X1900, X2000) |> 
-#   mutate(pct_1900_1800 = ((X1900-X1800) / X1800)*100) |> 
-#   mutate(pct_2000_1900 = ((X2000-X1900) / X1900)*100) 
+# change <- life_expect |>
+#   select(country, X1800, X1900, X2000) |>
+#   mutate(pct_1900_1800 = ((X1900-X1800) / X1800)*100) |>
+#   mutate(pct_2000_1900 = ((X2000-X1900) / X1900)*100)
 # 
-# pct_1900_1800 <- change |> 
-#   select(country, X1900, X1800, pct_1900_1800) |> 
+# pct_1900_1800 <- change |>
+#   select(country, X1900, X1800, pct_1900_1800) |>
 #   slice_max(pct_1900_1800, n=10)
 # 
-# pct_2000_1900 <- change |> 
-#   select(country, X2000, X1900, pct_2000_1900) |> 
+# pct_2000_1900 <- change |>
+#   select(country, X2000, X1900, pct_2000_1900) |>
 #   slice_max(pct_2000_1900, n=10)
 
 ```
@@ -692,16 +710,7 @@ life_1925 |>
   arrange(desc(percentile))
 ```
 
-### Data Visualization
 
-```{r}
-
-life_1925 |> 
-  ggplot(aes(x = value)) +
-  geom_histogram()
-```
-
-(actions that allow users to solve data manipulation challenges),
 
 #### YOUR TURN
 
@@ -713,17 +722,262 @@ Using the examples above
 
 ```
 
+## Data Visualization
+
+R has a variety of excellent data visualization tools. You can build maps, interactive graphics and many different types of static charts. You can also directly output to external tools such as Datawrapper, which you will see in a subsequent lesson.
+
+To start, you're going to work with the "top" dataframe that we built earlier, that shows the top 10 countries by percentage change in life expectancy from 1925 to 2025.
+```{r}
+ggplot(data=top) +
+  geom_col(mapping=aes(x=pct_change, y=country)) 
+
+```
+
+**That's ugly. Add some color: fill=n**
+
+```{r}
+ggplot(data=top) +
+  geom_col(mapping=aes(x=pct_change, y=country, fill=pct_change)) 
+
+```
+
+**Where's the "pipe"?**
+In ggplot2, the command lines are linked by a + sign and not the pipe operator |>
+It's a quirk in R and we hope they fix it at some point. Don't hold your breath, however. Until then, use the + operator to link lines in ggplot2
+
+
+**Ditch the legend: theme(legend.position = "none")**
+
+```{r}
+
+ggplot(top,aes(x = pct_change, y = country,
+             fill = pct_change)) +
+  geom_col(position = "dodge") + 
+  theme(legend.position = "none")
+
+```
+
+**Add Headlines, Annotations and Credits: labs(title =**
+
+```{r}
+
+ggplot(top,aes(x = pct_change, y = country,
+             fill = pct_change)) +
+  geom_col(position = "dodge") + 
+  theme(legend.position = "none") +
+#This is your title sequence
+  labs(title = "Countries with biggest life expectancy gains, 1925-2025",
+       subtitle = "Top 10 countries by percentage change",
+       caption = "Source: Gapminder - https://www.gapminder.org/data/ Graphic by Rob Wells, 5-27-2025",
+       y="Country",
+       x="Pct Change")
+```
+
+**Sorting a chart**
+The bars need to be sorted, highest to lowest. Use reorder()
+```{r}
+ggplot(top, aes(x = pct_change, y = reorder(country, pct_change),
+                fill = pct_change)) +
+  geom_col(position = "dodge") + 
+  theme(legend.position = "none") +
+#This is your title sequence
+  labs(title = "Countries with biggest life expectancy gains, 1925-2025",
+       subtitle = "Top 10 countries by percentage change",
+       caption = "Source: Gapminder - https://www.gapminder.org/data/ Graphic by Rob Wells, 5-27-2025",
+       y="Country",
+       x="Pct Change")
+```
+
+
+
 ## Text Analysis
 
-<https://thescoop.org/data_journalism_book/textanalysis.html>
+R can also help you find gems in big stacks of documents. We will work with a lengthy document to learn common phrases. In this case, it's a 62-page transcript of the year-end news conference by Russian President Vladimir Putin, held of Dec. 26, 2024.
+
+To do this work, you will install tidytext, a powerful program that prepares text for machine learning and natural language processing.
+
+```{r}
+install.packages("tidytext")
+library(tidytext)
+```
+
+To speed thing up, I downloaded the transcript from the BBC and processed it into a raw text file, called putin.txt
+
+**Tokenize**
+
+```{r}
+putin <- read_lines("./assets/putin.txt") #This reads the text file into R.
+
+putin_df <- tibble(putin,) #This converts the file into a dataframe, one column, 3,624 rows. Man, that guy can talk!
+```
+
+
+**Tokenize data**
+This process takes a sentence and makes it one row per word. Using the previous sentence, tokenization will do the following:
+1 This
+2 process
+3 takes
+4 a
+5 sentence
+6 and 
+7 makes
+8 it
+9 one
+10 row
+11 per
+12 word.
+
+
+```{r}
+putin_tokenized <- putin_df %>%
+  unnest_tokens(word,putin)
+
+head(putin_tokenized, 20)
+```
+So tokenizing this 62-page transcript yields a dataframe with 37,007 rows, one line per word. Putting the transcript into such a structured data format allows R to perform many computations on the text such as counting the frequency of word pairs, or bigrams. 
+
+**Word Count**
+```{r}
+putin_word_ct <- putin_tokenized %>%
+  count(word, sort=TRUE)
+
+head(putin_word_ct, 20)
+```
+
+**Remove stopwords**
+We can see from the results above that the program correctly counted "the" as the most frequently used word. Great, but that doesn't give us much insight into what Putin said.
+
+We can cut the articles, pronouns and other words to get to the meat of the text.
+The tidytext package includes the stop_words dataset. It contains, as of this writing, 1,149 words that data scientists and linguistic nerds felt could be removed from sentences because they don't add meaning. Filtering out these words can help focus on the more meaningful content, making it easier to uncover trends, themes, and key information in large amounts of text. Obviously, we have different priorities and we may or may not want to use stop_words or we have want to provide a customized list of stop words.
+
+The stop_words list is derived from three separate lists, or lexicons: SMART (571 words), onix (404 words), and snowball (174 words)
+
+The ONIX lexicon comes from the Open Information Exchange and is often used in text mining and natural language processing. 
+
+The Snowball lexicon is part of a broader project that has algorithms that simplify words in different languages by reducing them to their root form. It's best known for the Porter stemming algorithm, which, for example, changes "running" to "run." 
+
+Lastly, the SMART lexicon is a set of common words, like "and," "the," and "is," and it comes from the SMART Information Retrieval System, created at Cornell University in the 1960s.
+
+```{r}
+data(stop_words)
+
+test <- stop_words %>% 
+  as.data.frame()
+
+head(test)
+```
+
+**Remove stopwords**
+```{r}
+
+data(stop_words)
+
+putin_tokenized_clean <- putin_tokenized %>%
+  anti_join(stop_words, by = c("word" = "word")) %>%
+  filter(word != "temp_file") %>%
+  filter(word != "stories_corpus") %>%
+  filter(!grepl('[0-9]', word))
+
+# Word Count
+
+putin_word_ct_clean <- putin_tokenized_clean %>%
+  count(word, sort=TRUE)
+
+```
+
+###YOUR TURN
+Compare the putin_word_ct_clean to the putin_word_ct. Write three sentences comparing the two and provide examples
+
+
+
+**Bigrams**
+
+Now we will count the most common two-word phrases, or bigrams, in the Putin press conference transcript. 
+
+```{r}
+bigrams <- putin_df  |> 
+  unnest_tokens(bigram, putin, token="ngrams", n=2) |> 
+    separate(bigram, c("word1", "word2"), sep = " ")
+
+#Filter out stop words.
+bigrams_cleaned <- bigrams |> 
+  anti_join(stop_words, by = c("word1" = "word"))  |> #filters out words based on the stop_word list
+  anti_join(stop_words, by = c("word2" = "word")) |> 
+  filter(!is.na(word1)) |> #eliminates NA values
+  count(word1, word2, sort = TRUE)
+```
+
+A little formatting for later
+```{r}
+bigrams_cleaned <- bigrams_cleaned |> 
+  mutate(bigram = (paste0(word1, " ", word2))) |> #rejoins the phrases into a single column
+  select(bigram, n, -word1, -word2) #eliminates the separate columns, reorders
+
+head(bigrams_cleaned, 20)
+```
+
+We can see from the results that Vladimir Putin is the most common phrase in the transcript, which isn't surprising. But look through the results and you can see the War Against Ukraine is the most prominent topic: "special military" and "military operation" are in the top 10 results.
+
+<br>
+
+### YOUR TURN
+
+Construct a ggplot chart with the top 25 phrases from the Putin press conference. Display the results in descending order using reorder()
+
+```{r}
+#this portion is blank for the student. 
+#putin_25 <- head(bigrams_cleaned,25)
+
+# ggplot(putin_25,aes(x = n, y = reorder(bigram, n), 
+#              fill = n)) +
+#   geom_col(position = "dodge") + 
+#   theme(legend.position = "none") +
+# #This is your title sequence
+#   labs(title = "Top phrases from Putin's 2024 press conference",
+#        subtitle = "Bigrams from 62-page transcript",
+#        caption = "Source: BBC Graphic by Rob Wells, 5-27-2025",
+#        y="Bigram",
+#        x="Count")
+
+```
+
+**2) Chart Calls by Day** Use the code above and add a ggplot chart to
+it
 
 ```{r}
 
 ```
 
+<br>
+
+
+
+
 |        |
 |:-------|
-| #Notes |
+#Notes |
+
+<https://thescoop.org/data_journalism_book/textanalysis.html>
+
+Now we're going to clean the data using the janitor package in R
+
+```{r}
+life_expect <- read_csv("./assets/lex.csv") |> 
+  clean_names()
+```
+
+Congratulations, you just received your first error message in R.
+What happened? The code above tried to execute a command, clean_names, when the library wasn't loaded in R. You need to install janitor and load the janitor package.
+Go ahead and do this and then rerun the code above.
+
+```{r}
+#this portion is blank for the student. 
+#install.packages(janitor)
+#library(janitor)
+# life_expect <- read_csv("./assets/lex.csv") |> 
+#   clean_names()
+
+```
 
 Get a list of countries to group them by continent, asia, europe etc Get
 list of countries with median income
