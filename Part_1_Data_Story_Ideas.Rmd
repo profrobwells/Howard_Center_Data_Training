@@ -209,6 +209,8 @@ Figure the percentage:
 52.8/86
 ```
 
+
+
 Using means
 
 Average life expectancy in 2025 The result, 73.1551, is stored in the
@@ -233,6 +235,7 @@ life_expect |>
             max_life = max(X2025)
 )
 ```
+
 
 #Average life expectancy in 1925
 
@@ -424,6 +427,9 @@ total |>
   count(category)
 
 ```
+
+
+#LESSON 4 STARTS HERE
 
 ## Basic statistics
 
