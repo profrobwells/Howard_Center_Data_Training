@@ -5,6 +5,8 @@
 
 # Lesson 2: Manipulating Data 
 
+# With these slides: https://docs.google.com/presentation/d/1zZK-WJ0hDS6myQsWA7BbFoxdnjhELlAMxjwvDXA5cJg/edit?usp=sharing
+
 # What is R?
 # The basic R programming language comes equipped with the bread and
 # butter math and visualization functions. You can perform basic
@@ -15,6 +17,10 @@
 # What makes R so dynamic is the thousands of external libraries (often called 
 # "packages") that allow you to build websites, publish books,
 # generate interactive graphics and produce topic models.
+
+# Many journalists use the RStudio software when working with R, which makes 
+# it easy to visualize what has been created and to perform desktop publishing
+# and other functions.
 
 # We will be using the Swiss Army knife of R packages, tidyverse.
 # Tidyverse comes with nine basic packages loaded with these strange nerd
@@ -58,6 +64,7 @@ library(tidyverse)
 
 life_expect <- read.csv("./assets/lex.csv") 
 
+# Exploratory data analysis
 # Examine Data
 glimpse(life_expect)
 
@@ -68,17 +75,16 @@ glimpse(life_expect)
 # 196 rows - each row is a country (195 counties)
 
 # Dplyr verbs
-# 1. dplyr verbs (actions that allow users to solve data manipulation
-#    challenges), and the questions each enables us to ask
+# The authors of tidyverse describe dplyr as follows: "dplyr is a 
+# grammar of data manipulation, providing a consistent set of verbs 
+# that help you solve the most common data manipulation challenges
 # 
-# These are the power verbs in R to identify, filter, summarise and create
-# new fields:
-# - Select 
-# - Arrange 
-# - Filter 
-# - Group_by 
-# - Summarize 
-# - Mutate
+# - Select - pick variables
+# - Arrange - change order of rows
+# - Filter - picks items based on values
+# - Group_by - organizes data based on shared characteristics 
+# - Summarize - used with addition, counting, average,  
+# - Mutate - create column with new variables
 
 # We will deploy these tools in the problems below
 
@@ -126,6 +132,18 @@ life_expect |>
 
 # Figure the percentage:
 52.8/86
+
+# Using Arrange
+# Order the data in ascending, descending by specified variable.
+# Here it is sorting alphabetically
+life_expect |> 
+  select(country, X2025) |> 
+  arrange(country)
+
+# Here is is sorting by 2025 life expectancy, descending
+life_expect |> 
+  select(country, X2025) |> 
+  arrange(desc(X2025))
 
 # Using means
 # 
@@ -175,9 +193,9 @@ life1925
 
 #this portion is blank for the student. 
 # The answer is 14.88097
-# life1975 <- life_expect |>
-#     summarise(mean(X1975, na.rm = TRUE)) |> 
-#    pull()
+ # life1975 <- life_expect |>
+ #     summarise(mean(X1975, na.rm = TRUE)) |> 
+ #    pull()
 # 
 # 
 # life2020<- life_expect |>

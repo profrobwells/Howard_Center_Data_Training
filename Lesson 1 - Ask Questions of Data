@@ -1,0 +1,59 @@
+#Lesson 1: Looking for stories in data
+
+Slides for this talk: https://docs.google.com/presentation/d/1WsNQBQ44nS1CeSWzmaQaf3BHP_iTm8domTRVlBIQWuw/edit?usp=sharing
+
+
+In this lesson, we will cover the following topics:
+
+How data analysis empowers journalists and focuses their research 
+
+How to apply standard news values when working with data 
+
+How to find stories in outliers; stories measuring deviations from average behavior. 
+
+Learning Outcome: You will understand how journalists use data to find newsworthy material.
+
+As journalists, we seek the unusual, the novel and the unexpected when hunting for stories. Deirdre O'Neill and Tony Harcup described the haziness of how we determine what is newsworthy. A common feature involves information that is new, relevant to readers, topical, and often out of the ordinary. The tools in this exercise will help us find such patterns.
+
+Data analysis can unearth previously undisclosed patterns. Data analysis can offer context - is something the biggest, smallest, about average? Data analysis can lead to discoveries even the government didn’t realize.
+
+For example, let's look at a typical city budget. Examine the categories for the city council, police, fire, parks and so forth. We see total spending is up and the same with revenues. Now apply a basic tool, the percentage change calculation, to see how spending by different departments. The big winners are the general fund, up 20%,  and police, up 14%, whereas the biggest losers are the parks, down 12% and city council, down 9%. Then note the average increase, which was 6%. 
+
+Armed with this information, we have a winners and losers story: parks and public works emerge as losers whereas the cops and the city's general fund are winners. Trees and playgrounds lose whereas guns and jails win. These simple calculations allow journalists to make clear, declarative statements about a list of numbers and humanize the findings in understandable ways. They also provide insight about the government operations that officials either didn't realize or didn't want to share.
+
+Yet getting the numbers is not enough. The power of data analysis is it helps journalists better focus their efforts and find good people to interview. The data is a great first step but the best stories come after journalists do the necessary reporting to offer the human context.
+
+We are working with global life expectancy data from gapminder.org, which covers 196 countries. This data spans from the year 1800 and has projections extending to 2100.
+
+Your editor gives you the Gapminder dataset and asks for a story in an hour. Where to start? First, we want to know who is winning: which country has the highest life expectancy? We won't reveal the answer here because you're going to use code to find it.
+
+Next, we need to know the countries that are the worst off in terms of life expectancy. Again, the code will help us find these countries. This leads us to report an easy story: “People living in Country_XYZ live the 61% as long as Country_ABC, according to new data.”
+
+In essence, we are looking for outliers, and these tools help describe such patterns.
+
+If your country isn't on the polar ends of the spectrum, we need to learn how it compares to others. That's where averages and medians come into play. Data journalists like to understand the typical case in a dataset, and so we will calculate the mean or median value.
+
+To kick that up a notch, we will look at where your country falls in the distribution. Is it grouped in the lowest quarter of the countries or in the highest tier? We can measure distribution by quartile.
+
+Quiz for Lesson #1
+
+Q: Select the following true statements about using data analysis to find stories.
+
+a: TRUE: You can identify outliers, the winners and losers, and provide details
+
+b: FALSE: The best data stories don't require additional reporting
+
+c: FALSE: Journalists should not perform their own calculations on government or business documents without first checking with the sources.
+
+d: TRUE: Powerful and interesting stories can be told based on simple percentage change calculations.
+
+Q: Your editor assigned you to write a story about the new city budget. It shows overall spending increased $1.3 million, library funding was up $90,000 and police funding was up $400,000. What would a data journalist do next?
+
+
+a) FALSE: Produce a story with just the numbers
+
+b) TRUE: Perform percentage change calculations and determine the averages for context on the changes
+
+c) TRUE: Conduct interviews with police officials, librarians, city council members and members of the public to contextualize the changes
+
+d) FALSE: Write a lead focusing on the city's press release that emphasized positive news about police funding

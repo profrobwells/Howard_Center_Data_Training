@@ -5,6 +5,9 @@
 
 # Lesson 5: Data Visualization Intro
 
+# Slides for this talk: https://docs.google.com/presentation/d/1ZCEnbwKs7IoXahUuRi6k_lJDo0RE8kRFbgR2Yvxv1Q0/edit?slide=id.g35ef985f458_0_84#slide=id.g35ef985f458_0_84
+
+
 #This lesson builds on the work from Lesson 2, 3 & 4. 
 # Load tidyverse library 
 library(tidyverse)
