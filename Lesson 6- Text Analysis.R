@@ -5,8 +5,7 @@
 
 # Lesson 6: Text Analysis
 
-#This lesson builds on the work from Lesson 2, 3, 4, 5. 
-
+# Slides for this lesson: https://docs.google.com/presentation/d/15TMr1oak6tYda-MA0-y4h340DtCuS6ImwHrYNnTiOjI/edit?usp=sharing
 
 
 # Text Analysis
