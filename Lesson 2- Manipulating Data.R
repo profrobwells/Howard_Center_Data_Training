@@ -8,6 +8,9 @@
 # With these slides: https://docs.google.com/presentation/d/1zZK-WJ0hDS6myQsWA7BbFoxdnjhELlAMxjwvDXA5cJg/edit?usp=sharing
 
 # What is R?
+
+#INSERT VIDEO 1
+
 # The basic R programming language comes equipped with the bread and
 # butter math and visualization functions. You can perform basic
 # mathematical operations, generate data visualizations, produce
@@ -52,6 +55,8 @@ library(tidyverse)
 # The tricky part: 
 # - install.packages - once
 # - load the library - each time you need it
+
+
 
 # We'll explore Life Expectancy Data by country, 1800 to present with
 # projections to 2100
