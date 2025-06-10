@@ -10,6 +10,7 @@
 # What is R?
 
 #INSERT VIDEO 1
+# With this script: https://docs.google.com/document/d/19eEI9RDLh0crU-TkSz_n8pGHZjx4cufdeF1tGQjAhF0/edit?usp=sharing
 
 # The basic R programming language comes equipped with the bread and
 # butter math and visualization functions. You can perform basic
@@ -56,7 +57,9 @@ library(tidyverse)
 # - install.packages - once
 # - load the library - each time you need it
 
-
+# INSERT VIDEO 2
+script: https://docs.google.com/document/d/1y4rAIoT2VGLgfRXHFoRENk5WyQaz_PVjP4um5pxWRdY/edit?tab=t.0
+slides: https://docs.google.com/presentation/d/1OdsE65uJLBgxk0XxTaVsufdlWICow9eldM4CwnYkmm8/edit?slide=id.g35ef985f458_0_152#slide=id.g35ef985f458_0_152
 
 # We'll explore Life Expectancy Data by country, 1800 to present with
 # projections to 2100
