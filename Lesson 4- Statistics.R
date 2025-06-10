@@ -1,5 +1,5 @@
 # How Journalists Ask Questions of Data
-# Digital Certificate Program
+# Howard Center Data Journalism Training Program
 # Philip Merrill College of Journalism
 
 
