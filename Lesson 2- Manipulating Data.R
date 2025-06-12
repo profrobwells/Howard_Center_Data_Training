@@ -57,9 +57,13 @@ library(tidyverse)
 # - install.packages - once
 # - load the library - each time you need it
 
+# Lesson 2 Exercise 2: Exploring Data
+
 # INSERT VIDEO 2
 script: https://docs.google.com/document/d/1y4rAIoT2VGLgfRXHFoRENk5WyQaz_PVjP4um5pxWRdY/edit?tab=t.0
 slides: https://docs.google.com/presentation/d/1OdsE65uJLBgxk0XxTaVsufdlWICow9eldM4CwnYkmm8/edit?slide=id.g35ef985f458_0_152#slide=id.g35ef985f458_0_152
+
+
 
 # We'll explore Life Expectancy Data by country, 1800 to present with
 # projections to 2100
@@ -81,6 +85,9 @@ glimpse(life_expect)
 # - <dbl> = numeric data
 # 302 columns - Each year life expectancy data 
 # 196 rows - each row is a country (195 counties)
+
+
+# Exercise 3: Intro to Dplyr
 
 # Dplyr verbs
 # The authors of tidyverse describe dplyr as follows: "dplyr is a 
@@ -194,7 +201,7 @@ life1925
 
 # Average life expectancy has increased by about 92% since 1925.
 
-#YOUR TURN
+# Lesson 2 Your Turn: Life Expectancy
 
 # Using the examples above, determine the life expectancy percentage
 # change from 1975 to 2020.
@@ -212,6 +219,8 @@ life1925
 # #
 # #
 # (life2020-life1975)/life1975 *100
+
+
 
 
 

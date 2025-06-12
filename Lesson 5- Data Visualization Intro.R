@@ -84,3 +84,28 @@ ggplot(top, aes(x = pct_change, y = reorder(country, pct_change),
        caption = "Source: Gapminder - https://www.gapminder.org/data/ Graphic by Rob Wells, 5-27-2025",
        y="Country",
        x="Pct Change")
+
+
+Your Turn
+Create a new dataframe called bottom with the 10 lowest life expectancy rates 
+by percentage change for 1950 and 2020. Filter out any results that have zero values in 2000.
+Then create a ggplot chart with a proper headline
+)
+
+bottom <- life_expect |> 
+  select(country, X1950, X2020) |> 
+  mutate(pct_change = round((X2020-X1950) / X1950*100,1)) |> 
+  filter(pct_change > 0) |> 
+  slice_min(pct_change, n= 10) 
+
+
+ggplot(bottom, aes(x = pct_change, y = reorder(country, pct_change),
+                fill = pct_change)) +
+  geom_col(position = "dodge") + 
+  theme(legend.position = "none") +
+  #This is your title sequence
+  labs(title = "Countries with lowest life expectancy gains, 1950-2020",
+       subtitle = "10 countries with lowest percntage change in life expectancy",
+       caption = "Source: Gapminder - https://www.gapminder.org/data/ Graphic by Rob Wells, 5-27-2025",
+       y="Country",
+       x="Pct Change")

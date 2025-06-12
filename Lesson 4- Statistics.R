@@ -214,5 +214,34 @@ life_1925 |>
 # It lists each country by its percentile ranking. Nice!
 
 # YOUR TURN
-# List all countries in the top 90th percentile for life expectancy in
-# 1925
+# List all countries outside of two standard deviations for life expectancy in
+# 1925. How many countries are outside the two standard deviations? Name two of 
+# the highest. Are there any countries more than two standard deviations below?
+
+life_1925_sd <- life_1925 |> 
+  summarize(standard_deviation = sd(value, na.rm = TRUE))
+life_1925_sd
+
+standard_deviation_table <- life_1925 |> 
+  summarize(one_sd = life_1925_sd + 38,
+            two_sd = (life_1925_sd * 2) + 38,
+            three_sd = (life_1925_sd * 3) + 38)  
+
+sd_countries <- life_1925 |> 
+  filter(value > 56.6 | value < 19.4) |> 
+  arrange(desc(value))
+
+Australia
+63.5
+above
+1925
+2
+Netherlands
+63.3
+above
+1925
+3
+Norway
+62.7
+above
+1925
