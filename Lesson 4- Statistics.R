@@ -73,7 +73,7 @@ total <- rbind(life_1925, life_1975, life_2025)
 # 
 
 total |> 
-   group_by(year) |> 
+  group_by(year) |> 
   count(category) 
 
 
@@ -170,7 +170,7 @@ bottom
 # Distribution of the data How are countries grouped? Were there many
 # below the average?
 # summary() is a powerful command
-  
+
 life_1925 |> 
   summary(value)
 
@@ -180,68 +180,105 @@ life_1925 |>
 # was 38 years, the third quartile was 40 years and the maximum value was
 # 64 years.
 # 
-# Let's explore the distribution by using a tool called standard deviation
+### Standard Deviation
+#Let's explore the distribution by **standard deviation**, a tool that measures how far individual data points typically are from the average.
 
+# SEAN - CREATE TRY IT 
 
 life_1925_sd <- life_1925 |> 
   summarize(standard_deviation = sd(value, na.rm = TRUE))
 life_1925_sd
 
+So we know the mean life expectancy is 38 years. Tells us that 68% of the countries in 1925 fall within one standard deviation, or 9.3 years, of the mean. In other words, 68% of the countries had a life expectancy between 28.3 years and 46.3 years.
 
-# So we know the mean life expectancy is 38 years. Tells us that 68% of
-# the countries in 1925 fall within one standard deviation, or 9.3 years,
-# of the mean. In other words, 68% of the countries had a life expectancy
-# between 28.3 years and 46.3 years.
-# 
-# Just about all countries, or 95%, fall within two standard deviations
-# from the mean, or 18.6 years; that would be between 19.4 years and 56.6
-# years of age.
-# 
-# And nearly all counties are within three standard deviations, or 27.9
-# years, or 10.1 years and 65.9 years.
-# 
-# This means that any value within 9.3 percentage points of the mean (38
-# years), either above or below, is within the first group. This provides
-# a sense of outliers and how dispersed the data may be in the dataset.
+Just about all countries, or 95%, fall within two standard deviations from the mean, or 18.6 years; that would be between 19.4 years and 56.6 years of age.
+
+And nearly all counties are within three standard deviations, or 27.9 years, or 10.1 years and 65.9 years.
+
+This means that any value within 9.3 percentage points of the mean (38 years), either above or below, is within the first group. This provides a sense of outliers and how dispersed the data may be in the dataset. 
+
+The standard deviation helps us understand whether or not data is heavily clustered around the mean or if it is broadly dispersed.
 
 
-# Another way to examine data is by calculating results in percentiles. We
-# use the command ntile
+# SEAN - CREATE TRY IT 
+```r
+life_2025_sd <- life_2025 |> 
+  summarize(standard_deviation = sd(value, na.rm = TRUE))
+life_2025_sd
+```
 
+We see the 2025 standard deviation is 10.1 versus the 1925 value was 9.3. That means life expectancy rates overall are moving further away from the average over time. It would suggest greater inequality as some countries have very long life expectancy rates whereas others have very brief life expectancy.
+
+Another way to examine data is by calculating results in percentiles. We use the command ntile
+
+# SEAN - CREATE TRY IT 
+```r
 life_1925 |> 
   mutate(percentile = ntile(value, 100)) 
-
-# It lists each country by its percentile ranking. Nice!
-
-# YOUR TURN
-# List all countries outside of two standard deviations for life expectancy in
-# 1925. How many countries are outside the two standard deviations? Name two of 
-# the highest. Are there any countries more than two standard deviations below?
-
-life_1925_sd <- life_1925 |> 
+```
+It lists each country by its percentile ranking. Nice!
+  
+  # YOUR TURN
+  # List all countries in the top 90th percentile for life expectancy in
+  # 1925
+  
+  # YOUR TURN
+  # List all countries outside of two standard deviations for life expectancy in 1925
+  
+  
+  # List all countries outside of one standard deviations for life expectancy in
+  # 1925. How many countries are outside the two standard deviations? Name two of 
+  # the highest. Are there any countries more than two standard deviations below?
+  
+  # SEAN - THIS IS THE ANSWER
+  
+  #The standard deviation calculation
+  life_1925_sd <- life_1925 |> 
   summarize(standard_deviation = sd(value, na.rm = TRUE))
 life_1925_sd
 
-standard_deviation_table <- life_1925 |> 
-  summarize(one_sd = life_1925_sd + 38,
-            two_sd = (life_1925_sd * 2) + 38,
-            three_sd = (life_1925_sd * 3) + 38)  
+#Calculate for the upper range of a single sd
+# We add the sd to the average
+upper_1sd <- life_1925 |> 
+  summarize(upper_bound = mean(value, na.rm = TRUE) + sd(value, na.rm = TRUE)) |>
+  pull(upper_bound)
 
+#Calculate for the lower range of a single sd
+# We subtract the sd from the average
+lower_1sd <- life_1925 |> 
+  summarize(lower_bound = mean(value, na.rm = TRUE) - sd(value, na.rm = TRUE)) |>
+  pull(lower_bound)
+
+#We filter by the upper and lower sd!
 sd_countries <- life_1925 |> 
-  filter(value > 56.6 | value < 19.4) |> 
+  filter(value > upper_1sd | value < lower_1sd) |> 
   arrange(desc(value))
 
-Australia
-63.5
-above
-1925
-2
-Netherlands
-63.3
-above
-1925
-3
-Norway
-62.7
-above
-1925
+sd_countries |>
+  count(category) 
+
+
+life_2025_sd <- life_2025 |> 
+  summarize(standard_deviation = sd(value, na.rm = TRUE))
+life_2025_sd
+
+upper_1sd <- life_2025 |> 
+  summarize(upper_bound = mean(value, na.rm = TRUE) + sd(value, na.rm = TRUE)) |>
+  pull(upper_bound)
+
+lower_1sd <- life_2025 |> 
+  summarize(lower_bound = mean(value, na.rm = TRUE) - sd(value, na.rm = TRUE)) |>
+  pull(lower_bound)
+
+sd_countries_2025 <- life_2025 |> 
+  filter(value > upper_1sd | value < lower_1sd) |> 
+  arrange(desc(value))
+
+sd_countries_2025 |>
+  count(category) 
+
+
+We see the 2025 standard deviation is 10.1 versus the 1925 value was 9.3. That suggests life expectancy rates overall are moving 
+further away from the average over time. But looking at the actual results tells a different story. In 1925,  there were 28 countries
+outside of the first standard deviation and 16 below. In 2025, the extremes narrowed: just 14 were outside the first standard deviation
+whereas 15 were below.
