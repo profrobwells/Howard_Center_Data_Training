@@ -29,7 +29,9 @@ putin_df <- tibble(putin,)
 
 
 # **Tokenize data**
-# This process takes a sentence and makes it one row per word. Using the previous sentence, tokenization will do the following:
+# This process takes a sentence and makes it one row per word. Here's an example of how tokenization works when we 
+# use the previous sentence:
+
 # 1 This
 # 2 process
 # 3 takes
@@ -43,13 +45,17 @@ putin_df <- tibble(putin,)
 # 11 per
 # 12 word.
 
+
+# Tokenize the putin data
 putin_tokenized <- putin_df %>%
   unnest_tokens(word,putin)
 
+# So tokenizing this 62-page transcript yields a dataframe with 37,007 rows, one line per word. Putting the transcript into such a structured data format allows R to perform many computations on the text such as counting the frequency of word pairs, or bigrams. 
+
+# show the first 20 rows of the tokenized data
 head(putin_tokenized, 20)
 
-# So tokenizing this 62-page transcript yields a dataframe with 37,007 rows, one line per word. Putting the transcript into such a structured data format allows R to perform many computations on the text such as counting the frequency of word pairs, or bigrams. 
-# 
+ 
 # **Word Count**
 #
 putin_word_ct <- putin_tokenized %>%
@@ -72,17 +78,18 @@ head(putin_word_ct, 20)
 # 
 # Lastly, the SMART lexicon is a set of common words, like "and," "the," and "is," and it comes from the SMART Information Retrieval System, created at Cornell University in the 1960s.
 # 
-# #
+# 
 data(stop_words)
 
 test <- stop_words %>% 
   as.data.frame()
 
+# This displays some of the top stop words 
 head(test)
 #
 
 # **Remove stopwords**
-#
+# Here's how we remove stop words from the text, by using an "anti_join" function that basically strips out entries in one dataframe from another.
 
 data(stop_words)
 
@@ -92,16 +99,26 @@ putin_tokenized_clean <- putin_tokenized %>%
   filter(word != "stories_corpus") %>%
   filter(!grepl('[0-9]', word))
 
-# Word Count
+#YOUR TURN
+# Compare the putin_word_ct_clean to the putin_word_ct. Write three sentences comparing the two and provide examples
+
+
+# Answer (SECTION NOT DISPLAYED FOR STUDENTS):
 
 putin_word_ct_clean <- putin_tokenized_clean %>%
   count(word, sort=TRUE)
 
+head(putin_word_ct_clean)
+
+putin_word_ct <- putin_tokenized %>%
+  count(word, sort=TRUE)
+
+head(putin_word_ct, 20)
+
+#THE ANSWER WILL DESCRIBE HOW PUTIN IS THE TOP WORD IN THE CLEANED DATA WITH 167 INSTANCES.
+
+# Now we see the top word is Putin. So better than the initial response of "the." We will continue to use this stop words technique in future lessons. 
 #
-
-#YOUR TURN
-# Compare the putin_word_ct_clean to the putin_word_ct. Write three sentences comparing the two and provide examples
-
 
 
 # **Bigrams**
@@ -112,6 +129,11 @@ putin_word_ct_clean <- putin_tokenized_clean %>%
 bigrams <- putin_df  |> 
   unnest_tokens(bigram, putin, token="ngrams", n=2) |> 
     separate(bigram, c("word1", "word2"), sep = " ")
+
+#Examine the results
+head(bigrams, 20)
+
+#We see a lot of metadata from the articles, noting that BBC Worldwide Monitoring produced the transcript. We will be able to cut down on this unnecessary verbiage.
 
 #Filter out stop words.
 bigrams_cleaned <- bigrams |> 
