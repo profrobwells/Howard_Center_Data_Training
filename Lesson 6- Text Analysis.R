@@ -15,9 +15,9 @@
 
 
 install.packages("tidytext")
-library(tidytext)
+suppressPackageStartupMessages(library(tidytext))
 # Load tidyverse library 
-library(tidyverse)
+suppressPackageStartupMessages(library(tidyverse))
 
 # To speed thing up, I downloaded the transcript from the BBC and processed it into a raw text file, called putin.txt
 # Processing the text data
@@ -153,4 +153,55 @@ head(bigrams_cleaned, 20)
 #        y="Bigram",
 #        x="Count")
 
-#
+YOUR TURN
+Now it's time for you to run through this process with a new dataset. In this case, it is French President Emmanual Macro's speech to the nation on March 5, 2025.
+https://www.elysee.fr/en/emmanuel-macron/2025/03/05/address-to-the-french-people
+
+Please perform the following tasks:
+- Load tidytext and tidyverse
+- Import the text, "macron.txt" from the data folder using read_lines()
+- Convert it into a dataframe using tibble()
+- Tokenize the text
+- Create bigrams
+- Filter out stop words
+- Count the bigrams
+- Rejoin the bigrams into a single column called bigram
+- Produce a list of the top 10 bigrams by count, in descending order
+
+#SEAN - THE ANSWER IS BELOW
+macron <- read_lines("./assets/macron.txt") 
+
+macron_df <- tibble(macron,) 
+
+macron_tokenized <- macron_df %>%
+  unnest_tokens(word,macron)
+
+bigrams <- macron_df  |> 
+  unnest_tokens(bigram, macron, token="ngrams", n=2) |> 
+  separate(bigram, c("word1", "word2"), sep = " ")
+
+bigrams_cleaned <- bigrams |> 
+  anti_join(stop_words, by = c("word1" = "word"))  |> #filters out words based on the stop_word list
+  anti_join(stop_words, by = c("word2" = "word")) |> 
+  filter(!is.na(word1)) |> #eliminates NA values
+  count(word1, word2, sort = TRUE) |> 
+  mutate(bigram = (paste0(word1, " ", word2))) |> #rejoins the phrases into a single column
+  select(bigram, n, -word1, -word2) |>  #eliminates the separate columns, reorders 
+  slice_max(n, n = 10)
+  
+
+The correct answer:
+  print(bigrams_cleaned)
+# A tibble: 10 × 2
+bigram                 n
+<chr>              <int>
+  1 peace deal             3
+2 european countries     2
+3 fellow citizens        2
+4 french people          2
+5 impose tariffs         2
+6 military spending      2
+7 nuclear deterrence     2
+8 russian threat         2
+9 vive la                2
+10 weeks ago              2
