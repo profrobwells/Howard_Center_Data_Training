@@ -19,6 +19,14 @@ life2025 <- life_expect |>
   summarize(mean(X2025)) |> 
   pull() 
 
+life1975 <- life_expect |> 
+  summarise(mean(X1975, na.rm = TRUE)) |> 
+  pull() 
+
+life1925 <- life_expect |> 
+  summarise(mean(X1925, na.rm = TRUE)) |> 
+  pull() 
+
 # Grouping and Summing.
 
 
@@ -73,6 +81,7 @@ life_expect |>
 
 life_1925 <- life_expect |> 
   select(country, X1925) |> 
+  filter(!is.na(X1925)) |>
   mutate(category = case_when(
          X1925 > life1925 ~ "above",
           X1925 < life1925 ~ "below")
