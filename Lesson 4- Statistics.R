@@ -21,6 +21,7 @@ life1925 <- life_expect |>
 
 life_1925 <- life_expect |> 
   select(country, X1925) |> 
+  filter(!is.na(X1925)) |>
   mutate(category = case_when(
     X1925 > life1925 ~ "above",
     X1925 < life1925 ~ "below")
@@ -68,13 +69,12 @@ total <- rbind(life_1925, life_1975, life_2025)
 
 # Let's determine the percent above, below the mean
 # 
-# Step 1: Count the categories by year by grouping by year, we can count up the 
-# above and below average countries. The results are in the colummn n
+# Step 1: Count the categories by year. We group the data by year and then we can count up the above and below average countries. The results are in the column "total".
 # 
 
 total |> 
   group_by(year) |> 
-  count(category) 
+  count(category, name = "total") 
 
 
 # Step Two: Percentage of Whole
@@ -282,3 +282,58 @@ We see the 2025 standard deviation is 10.1 versus the 1925 value was 9.3. That s
 further away from the average over time. But looking at the actual results tells a different story. In 1925,  there were 28 countries
 outside of the first standard deviation and 16 below. In 2025, the extremes narrowed: just 14 were outside the first standard deviation
 whereas 15 were below.
+
+
+
+CODE FOR CHART IN SLIDES OF SD DISTRIBUTION
+Load required libraries
+library(ggplot2)
+library(dplyr)
+
+# Calculate overall statistics (no categories)
+overall_stats <- life_1925 %>%
+  summarise(
+    mean_val = mean(value),
+    sd_val = sd(value),
+    mean_minus_1sd = mean(value) - sd(value),
+    mean_plus_1sd = mean(value) + sd(value),
+    mean_minus_2sd = mean(value) - 2*sd(value),
+    mean_plus_2sd = mean(value) + 2*sd(value)
+  )
+
+print(overall_stats)
+
+# Create overall distribution plot
+ggplot(life_1925, aes(x = value)) +
+  geom_density(fill = "#2E86AB", alpha = 0.6) +
+  # Add vertical lines for mean and standard deviations
+  geom_vline(aes(xintercept = overall_stats$mean_val), 
+             color = "red", linetype = "solid", size = 1) +
+  geom_vline(aes(xintercept = overall_stats$mean_minus_1sd), 
+             color = "blue", linetype = "dashed", size = 0.8) +
+  geom_vline(aes(xintercept = overall_stats$mean_plus_1sd), 
+             color = "blue", linetype = "dashed", size = 0.8) +
+  geom_vline(aes(xintercept = overall_stats$mean_minus_2sd), 
+             color = "darkgreen", linetype = "dashed", size = 0.8) +
+  geom_vline(aes(xintercept = overall_stats$mean_plus_2sd), 
+             color = "darkgreen", linetype = "dashed", size = 0.8) +
+  labs(
+    title = "Distribution of Life Expectancy (1925)",
+    subtitle = "Red line = Mean, Blue = ±1 SD, Green = ±2 SD",
+    x = "Life Expectancy (years)",
+    y = "Density"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 12, face = "bold"),
+    plot.subtitle = element_text( size = 8)
+  )
+
+#  actual values for reference
+cat("\nStatistical Summary:\n")
+cat("Mean:", round(overall_stats$mean_val, 2), "years\n")
+cat("Standard Deviation:", round(overall_stats$sd_val, 2), "years\n")
+cat("Mean - 1SD:", round(overall_stats$mean_minus_1sd, 2), "years\n")
+cat("Mean + 1SD:", round(overall_stats$mean_plus_1sd, 2), "years\n")
+cat("Mean - 2SD:", round(overall_stats$mean_minus_2sd, 2), "years\n")
+cat("Mean + 2SD:", round(overall_stats$mean_plus_2sd, 2), "years\n")
